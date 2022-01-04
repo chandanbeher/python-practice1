@@ -1,27 +1,16 @@
-# WAP to read 3 subjects: project score, internal score , external score.
-# if student got passed in project,internal and external then find total score.
-# pass marks : 50
-# total= 70% from project+ 20% external + 10% internal
-# print grade A: 90+ B :75-90 C: 50-75
-# print fail along with subject score.
+#3. Program to create two lists with EVEN numbers and ODD numbers from a list.
+list1 = [11, 22, 33, 44, 55]
 
-project=int(input("Enter project score"))
-external=int(input("Enter External score"))
-internal=int(input("Enter internal score"))
+listOdd = []
+listEven = []
 
-if project>=50 and external>=50 and internal>=50:
-    total=(70/100)*project+ (20/100)*external+(10/100)*internal
-    print("Total score: ",total)
-    if total>=90:
-        print("A grade")
-    elif total>=75:
-        print("B grade")
-    else:
-        print("C grade")
-else:
-    if project<50:
-        print("failed in project and the score is: ",project)
-    if external<50:
-        print("failed in external and the score is: ",external)
-    if internal<50:
-        print("failed in internal and the score is: ",internal)
+
+for num in list1:
+	if num%2 == 0:
+		listEven.append(num)
+	else:
+		listOdd.append(num) 
+
+print ("list1:    ", list1 )
+print ("listEven: ", listEven)
+print ("listOdd:  ", listOdd)
