@@ -1,0 +1,126 @@
+1. List all the columns of the Salespeople table
+MariaDB [bitlabs]> select * from salespeople;
++------+---------+-----------+------+
+| snum | sname   | city      | comm |
++------+---------+-----------+------+
+| 1001 | Peel    | London    | 0.12 |
+| 1002 | Serres  | San Jose  | 0.13 |
+| 1003 | AxelRod | New York  | 0.10 |
+| 1004 | Motika  | London    | 0.11 |
+| 1005 | Fran    | London    | 0.26 |
+| 1007 | Rifkin  | Barcelona | 0.15 |
++------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+MariaDB [bitlabs]> 
+4. Find the largest order taken by each salesperson on each date
+MariaDB [bitlabs]> select s.snum,max(o.amt),o.odate from salespeople s join customer c join orders o on s.snum=c.snum and c.cnum=o.cnum group by c.snum order by o.odate;
++------+------------+------------+
+| snum | max(o.amt) | odate      |
++------+------------+------------+
+| 1002 |     180.69 | 1996-02-11 |
+| 1007 |     300.13 | 1996-03-10 |
+| 1001 |     900.60 | 1996-04-05 |
+| 1004 |    1800.09 | 1996-04-17 |
+| 1003 |     345.90 | 1996-06-13 |
++------+------------+------------+
+2. List all customers with a rating of 100.
+MariaDB [bitlabs]> select*from customer where rating =100; 
++------+---------+--------+--------+------+
+| cnum | cname   | city   | rating | snum |
++------+---------+--------+--------+------+
+| 2001 | Hoffman | London |    100 | 1001 |
+| 2006 | praveen | London |    100 | 1001 |
+| 2007 | Satish  | Rome   |    100 | 1004 |
++------+---------+--------+--------+------+
+5. Arrange the Orders table by descending customer number.
+MariaDB [bitlabs]> select * from orders group by onum order by cnum desc;
++------+---------+------------+------+
+| onum | amt     | odate      | cnum |
++------+---------+------------+------+
+| 3001 |   18.69 | 1996-03-10 | 2008 |
+| 3006 |  300.13 | 1996-05-11 | 2008 |
+| 3002 | 1800.09 | 1996-04-17 | 2007 |
+| 3008 |  190.49 | 1996-07-12 | 2006 |
+| 3011 |  234.19 | 1996-07-20 | 2006 |
+| 3010 |  180.69 | 1996-06-30 | 2004 |
+| 3005 |  156.10 | 1996-02-11 | 2003 |
+| 3009 |  345.90 | 1996-06-15 | 2002 |
+| 3007 |  111.19 | 1996-06-13 | 2002 |
+| 3003 |  900.60 | 1996-04-05 | 2001 |
++------+---------+------------+------+
+7. List names of all customers matched with the salespeople serving them.
+MariaDB [bitlabs]>  select c.cname,s.sname from customer c join salespeople s on c.snum=s.snum; 
++---------+---------+
+| cname   | sname   |
++---------+---------+
+| Hoffman | Peel    |
+| Ram     | AxelRod |
+| Kishen  | Serres  |
+| Sath    | Serres  |
+| praveen | Peel    |
+| Satish  | Motika  |
+| Karthik | Rifkin  |
++---------+---------+
+9. Count the orders of each of the salespeople and output the results in descending order.
+MariaDB [bitlabs]>  select s.sname,count(s.sname) from salespeople s join customer c join orders o on s.snum=c.snum and c.cnum=o.cnum group by s.snum order by count(s.snum) desc; 
++---------+----------------+
+| sname   | count(s.sname) |
++---------+----------------+
+| Peel    |              3 |
+| Serres  |              2 |
+| AxelRod |              2 |
+| Rifkin  |              2 |
+| Motika  |              1 |
++---------+----------------+
+10. List the Customer table if and only if one or more of the customers in the Customer table are
+located in San Jose.
+MariaDB [bitlabs]>  select * from customer where city in('san Jose');
++------+---------+----------+--------+------+
+| cnum | cname   | city     | rating | snum |
++------+---------+----------+--------+------+
+| 2003 | Kishen  | San Jose |    200 | 1002 |
+| 2008 | Karthik | San Jose |    300 | 1007 |
++------+---------+----------+--------+------+
+
+11. Match salespeople to customers according to what city they lived in.
+MariaDB [bitlabs]> select s.snum,s.sname,s.city,c.cnum,c.cname,c.city from salespeople s join customer c on s.snum=c.snum group by s.snum;
++------+---------+-----------+------+---------+----------+
+| snum | sname   | city      | cnum | cname   | city     |
++------+---------+-----------+------+---------+----------+
+| 1001 | Peel    | London    | 2001 | Hoffman | London   |
+| 1002 | Serres  | San Jose  | 2003 | Kishen  | San Jose |
+| 1003 | AxelRod | New York  | 2002 | Ram     | Rome     |
+| 1004 | Motika  | London    | 2007 | Satish  | Rome     |
+| 1007 | Rifkin  | Barcelona | 2008 | Karthik | San Jose |
++------+---------+-----------+------+---------+----------+
+12. Find the largest order taken by each salesperson.
+MariaDB [bitlabs]>  select s.snum,s.sname,sum(o.amt) from salespeople s join customer c join orders o on s.snum=c.snum and c.cnum=o.cnum group by s.snum order by sum(o.amt) desc;
++------+---------+------------+
+| snum | sname   | sum(o.amt) |
++------+---------+------------+
+| 1004 | Motika  |    1800.09 |
+| 1001 | Peel    |    1325.28 |
+| 1003 | AxelRod |     457.09 |
+| 1002 | Serres  |     336.79 |
+| 1007 | Rifkin  |     318.82 |
++------+---------+------------+
+13. Find customers in San Jose who have a rating above 200.
+MariaDB [bitlabs]>  select * from customer where rating>200 and city in ('san jose');
++------+---------+----------+--------+------+
+| cnum | cname   | city     | rating | snum |
++------+---------+----------+--------+------+
+| 2008 | Karthik | San Jose |    300 | 1007 |
++------+---------+----------+--------+------+
+14. List the names and commissions of all salespeople in London.
+MariaDB [bitlabs]> select sname,comm from salespeople where city in('london'); 
++--------+------+
+| sname  | comm |
++--------+------+
+| Peel   | 0.12 |
+| Motika | 0.11 |
+| Fran   | 0.26 |
++--------+------+
+
+
+
